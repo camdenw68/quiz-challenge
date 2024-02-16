@@ -1,32 +1,29 @@
-var timer = 60; // Initial time in seconds
-
+var timer = 60; 
 function startQuiz() {
-    // Hide the start button
     var startBtn = document.getElementById("startBtn");
     startBtn.style.display = "none";
 
-    // Show the questions and center the answer buttons
-    var questionElement = document.getElementById("question");
-    questionElement.style.display = "block";
+    // Show the questions and the answer buttons
+    var questionElements = document.getElementById("question");
+    questionElements.style.display = "block";
 
     var answerButtons = document.querySelectorAll('.btn[id^="choice"]');
     answerButtons.forEach(function (button) {
         button.style.display = "block";
         button.style.margin = "auto"; 
         button.onclick = function () {
-            var choiceIndex = parseInt(button.id.slice(-1));
-            var selectedChoice = quiz.getCurrentQuestion().choices[choiceIndex];
+            var choiceIn = parseInt(button.id.slice(-1));
             quiz.guess(selectedChoice);
             QuizAns.displayNext();
         };
     });
 
     // Show score, progress, and timer
-    var scoreElement = document.getElementById("score");
-    scoreElement.style.display = "block";
+    var score = document.getElementById("score");
+    score.style.display = "block";
 
-    var progressElement = document.getElementById("progress");
-    progressElement.style.display = "block";
+    var progress = document.getElementById("progress");
+    progress.style.display = "block";
 
     var timerElement = document.getElementById("timer");
     timerElement.style.display = "block";
@@ -42,18 +39,15 @@ function startQuiz() {
         }
     }, 1000);
 
-    // Display the first question
     QuizAns.displayNext();
-}
-
+  };
 function Quiz(questions) {
     this.score = 0;
     this.questions = questions;
     this.currentQuestionIndex = 0;
 }
-
-Quiz.prototype.guess = function (answer) {
-    if (this.getCurrentQuestion().isCorrectAnswer(answer)) {
+Quiz.prototype.guess = function (ans) {
+    if (this.getCurrentQuestion().isCorrectAnswer(ans)) {
         this.score++;
     }
     this.currentQuestionIndex++;
@@ -67,10 +61,10 @@ Quiz.prototype.hasEnded = function () {
     return this.currentQuestionIndex >= this.questions.length;
 };
 
-function Question(text, choices, answer) {
+function Question(text, choices, answers) {
     this.text = text;
     this.choices = choices;
-    this.answer = answer;
+    this.answers = answers;
 }
 
 Question.prototype.isCorrectAnswer = function (choice) {
@@ -125,13 +119,14 @@ var QuizAns = {
             if (!quiz.getCurrentQuestion().isCorrectAnswer(guess)) {
                 timer -= 10;
                 if (timer < 0) {
-                    timer = 0; // Ensure timer doesn't go below 0
+                    timer = 0; 
                 }
             }
             quiz.guess(guess);
             QuizAns.displayNext();
         };
     },
+    
     displayProgress: function () {
         var currentQuestionNumber = quiz.currentQuestionIndex + 1;
         this.populateIdWithHTML("progress", "Question " + currentQuestionNumber + " of " + quiz.questions.length);
@@ -147,10 +142,10 @@ var questions = [
     new Question("In JavaScript, what can make something repeat itself?", ["nothing", "and statements", "loops", "repeating it"], "loops")
 ];
 
-// create quiz
+// start quiz
 var quiz = new Quiz(questions);
-let check = true;
-// save score and initals
+
+// save score to local storage
 function saveScore() {
     var initials = prompt("Enter your initials:");
 
